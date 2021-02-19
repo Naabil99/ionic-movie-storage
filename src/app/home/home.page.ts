@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { IMovie } from '../share/interfaces';
-import { MoviedbserviceService } from '../core/moviedbservice.service';
+import { Ientrenamiento } from '../share/interfaces';
+import { entrenamientodbserviceService } from '../core/entrenamientobservice.service';
 import { Router } from '@angular/router';
 import { DetailsPage } from '../details/details.page';
+import { EntrenamientocrudService } from '../core/entrenamientocrud.service';
 
 @Component({
   selector: 'app-home',
@@ -11,54 +12,74 @@ import { DetailsPage } from '../details/details.page';
 })
 export class HomePage implements OnInit {
 
-  public movies: IMovie[];
-  moviesinit: IMovie[] = [
-    {
-      id: '1',
-      name: 'EL padrino',
-      genre: 'Grangsteres, Drama',
-      date: '1972',
-      cover:'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/The_Godfather_movie_logo.png/250px-The_Godfather_movie_logo.png',
-      description: "El Padrino (título original en inglés: The Godfather1) es una película estadounidense de 1972 dirigida por Francis Ford Coppola. El filme fue producido por Albert S. Ruddy, de la compañía Paramount Pictures. Está basada en la novela homónima (que a su vez está basada en la familia real de los Mortillaro de Sicilia), de Mario Puzo, quien adaptó el guion junto a Coppola y Robert Towne, este último sin ser acreditado"
-    },
-    {
-      id: '2',
-      name: 'Kill Bill',
-      genre: 'acción, película de violación y venganza y artes marciales',
-      date: '2003',
-      cover:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Kill_Bill_svg_logo.svg/800px-Kill_Bill_svg_logo.svg.png',
-      description: "Kill Bill es una película de acción y suspenso estadounidense de dos partes estrenada en 2003 y 2004 respectivamente, que fue escrita y dirigida por Quentin Tarantino. Kill Bill originalmente fue propuesta para tener un lanzamiento único en los cines, pero con una duración de más de cuatro horas, fue separada en dos volúmenes: Kill Bill: Volumen 1, lanzada a finales de 2003, y Kill Bill: Volumen 2, lanzada a inicios de 2004. Las dos películas fueron bien recibidas por la crítica, muchos notando su estilo de dirección y su homenaje a géneros cinematográficos como las películas de artes marciales hongkonesa, las películas de samuráis, spaghetti western, chicas con armas y venganza."
-    }
-  ]
-constructor(private moviedbService: MoviedbserviceService, private route:
-Router) { }
-ngOnInit(): void {
-// If the database is empty set initial values
-this.inicialization();
-}
-ionViewDidEnter(){
-// Remove elements if it already has values
-if(this.movies !== undefined ){
-this.movies.splice(0);
-}
-this.retrieveValues();
-}
-inicialization() {
-if (this.moviedbService.empty()) {
-this.moviesinit.forEach(movie => {
-this.moviedbService.setItem(movie.id, movie);
+  entrenamientos: any;
+entrenamientoName: string;
+entrenamientoReps: string;
+entrenamientoSets: string;
+entrenamientoCover: string;
+entrenamientoTargetedMuscles: string;
+
+
+constructor(private entrenamientocrudService: EntrenamientocrudService,private route: Router) { }
+ngOnInit() {
+this.entrenamientocrudService.read_Entrenamientos().subscribe(data => {
+this.entrenamientos = data.map(e => {
+return {
+id: e.payload.doc.id,
+isEdit: false,
+name: e.payload.doc.data()['name'],
+reps: e.payload.doc.data()['reps'],
+sets: e.payload.doc.data()['sets'],
+cover: e.payload.doc.data()['cover'],
+targetedMuscles: e.payload.doc.data()['targetedMuscles']
+};
+})
+console.log(this.entrenamientos);
 });
 }
+CreateRecord() {
+let record = {};
+record['name'] = this.entrenamientoName;
+record['reps'] = this.entrenamientoReps;
+record['sets'] = this.entrenamientoSets;
+record['cover'] = this.entrenamientoCover;
+record['targetedMuscles'] = this.entrenamientoTargetedMuscles;
+this.entrenamientocrudService.create_Entrenamiento(record).then(resp => {
+this.entrenamientoName = "";
+this.entrenamientoReps = "";
+this.entrenamientoSets = "";
+this.entrenamientoCover = "";
+this.entrenamientoTargetedMuscles = "";
+console.log(resp);
+})
+.catch(error => {
+console.log(error);
+});
 }
-retrieveValues(){
-// Retrieve values
-this.moviedbService.getAll().then(
-(data) => this.movies = data
-);
+RemoveRecord(rowID) {
+this.entrenamientocrudService.delete_Entrenamiento(rowID);
 }
-movieTapped(movie) {
-this.route.navigate(['details', movie.id]);
+EditRecord(record) {
+  record.isEdit = true;
+record.EditName = record.name;
+record.EditReps = record.reps;
+record.EditSets = record.sets;
+record.EditCover = record.cover;
+record.EditTargetedMuscles = record.targetedMuscles;
+}
+UpdateRecord(recordRow) {
+let record = {};
+record['name'] = recordRow.EditName;
+record['reps'] = recordRow.EditReps;
+record['sets'] = recordRow.EditSets;
+record['cover'] = recordRow.EditCover;
+record['targetedMuscles'] = recordRow.EditTargetedMuscles;
+this.entrenamientocrudService.update_Entrenamiento(recordRow.id, record);
+recordRow.isEdit = false;
 }
 
+entrenamientoTapped(entrenamiento) {
+  this.route.navigate(['details', entrenamiento.id]);
+  }
 
 }

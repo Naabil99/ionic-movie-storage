@@ -6,11 +6,11 @@
   <ion-button [routerLink]="['/home']" routerDirection="back" color="medium">
 <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
 </ion-button>
-<ion-title slot="secondary">Crear registro de película</ion-title>
+<ion-title slot="secondary">Crear tu ejercicio</ion-title>
 </ion-toolbar>
 </ion-header>
 <ion-content>
-  <form [formGroup]="movieForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="entrenamientoForm" (ngSubmit)="onSubmit()">
   <ion-grid>
   <ion-row>
   <ion-col>
@@ -22,23 +22,23 @@
   </ion-row>
   <ion-row>
   <ion-col>
-  <ion-label>Género:</ion-label>
+  <ion-label>Sets:</ion-label>
   </ion-col>
   <ion-col>
-  <ion-input type="text" placeholder="..." formControlName="genre"></ion-input>
-  </ion-col>
-  </ion-row>
-  <ion-row>
-  <ion-col>
-  <ion-label>Fecha:</ion-label>
-  </ion-col>
-  <ion-col>
-  <ion-input type="date" formControlName="date"></ion-input>
+  <ion-input type="number" placeholder="..." formControlName="sets"></ion-input>
   </ion-col>
   </ion-row>
   <ion-row>
   <ion-col>
-  <ion-label>Portada:</ion-label>
+  <ion-label>reps:</ion-label>
+  </ion-col>
+  <ion-col>
+  <ion-input type="number" formControlName="reps"></ion-input>
+  </ion-col>
+  </ion-row>
+  <ion-row>
+  <ion-col>
+  <ion-label>Imagen:</ion-label>
   </ion-col>
   <ion-col>
     <ion-input type="url" placeholder="http://****" formControlName="cover"></ion-input>
@@ -46,10 +46,10 @@
 </ion-row>
 <ion-row>
 <ion-col>
-<ion-label>Descripción:</ion-label>
+<ion-label>Músculos afectados:</ion-label>
 </ion-col>
 <ion-col>
-<ion-textarea placeholder="****" formControlName="description"></ion-textarea>
+<ion-textarea placeholder="****" formControlName="targetedMuscles"></ion-textarea>
 </ion-col>
 </ion-row>
 </ion-grid>

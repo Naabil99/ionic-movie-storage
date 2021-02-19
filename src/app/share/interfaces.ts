@@ -1,8 +1,8 @@
-export interface IMovie {
-    id: string;
+export interface Ientrenamiento {
+    id: String;
     name: string;
-    genre: string;
-    date: string;
+    sets: Number;
+    reps: Number;
+    targetedMuscles: string;
     cover: string;
-    description: string;
     }

@@ -11,11 +11,11 @@
   <ion-content>
   <div class="ion-padding">
   <ion-list>
-  <ion-item *ngFor="let movie of movies" (click)="movieTapped(movie)">
+  <ion-item *ngFor="let entrenamiento of entrenamientos" (click)="entrenamientoTapped(entrenamiento)">
   <ion-thumbnail slot="start">
-  <img src="{{movie.cover}}">
+  <img src="{{entrenamiento.cover}}">
   </ion-thumbnail>
-  <ion-label> {{movie.name}}</ion-label>
+  <ion-label> {{entrenamiento.name}}</ion-label>
   </ion-item>
   </ion-list>
   </div>

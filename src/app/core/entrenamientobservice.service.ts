@@ -1,27 +1,27 @@
 import { Injectable } from '@angular/core';
-import { IMovie } from '../share/interfaces';
+import { Ientrenamiento } from '../share/interfaces';
 import { Storage } from '@ionic/storage';
 
 @Injectable({
   providedIn: 'root'
 })
-export class MoviedbserviceService {
-  auxMovie: IMovie;
-  auxMovieList: IMovie[] = [];
+export class entrenamientodbserviceService {
+  auxentrenamiento: Ientrenamiento;
+  auxentrenamientoList: Ientrenamiento[] = [];
   constructor(private storage: Storage) { }
 
 
-  setItem(reference: string, value: IMovie) {
-    this.storage.set(reference, { id: value.id, name: value.name, genre:
-    value.genre, date: value.date, cover: value.cover, description:
-    value.description })
+  setItem(reference: string, value: Ientrenamiento) {
+    this.storage.set(reference, { id: value.id, name: value.name, sets:
+    value.sets, reps: value.reps, cover: value.cover, targetedMuscles:
+    value.targetedMuscles })
     .then(
     (data) => console.log('Stored first item!', data),
     error => console.error('Error storing item', error)
     );
     }
 
-    getItem(reference):Promise<IMovie>{
+    getItem(reference):Promise<Ientrenamiento>{
       return this.storage.get(reference);
     }
 
@@ -37,15 +37,15 @@ export class MoviedbserviceService {
         return this.storage.keys();
         }
 
-        getAll():Promise<IMovie[]>{
+        getAll():Promise<Ientrenamiento[]>{
           return this.storage.keys().then( (k)=>
           {
           k.forEach(element => {
           this.getItem(element).then(
-          (data:IMovie)=> this.auxMovieList.push(data)
+          (data:Ientrenamiento)=> this.auxentrenamientoList.push(data)
           );
           });
-          return this.auxMovieList;
+          return this.auxentrenamientoList;
 });
 }
 

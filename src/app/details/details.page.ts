@@ -1,53 +1,53 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MoviedbserviceService } from '../core/moviedbservice.service';
-import { IMovie } from '../share/interfaces';
+import { entrenamientodbserviceService } from '../core/entrenamientobservice.service';
+import { Ientrenamiento } from '../share/interfaces';
 import { ToastController } from '@ionic/angular';
+import { EntrenamientocrudService } from '../core/entrenamientocrud.service';
 @Component({
-selector: 'app-details',
-templateUrl: './details.page.html',
-styleUrls: ['./details.page.scss'],
+  selector: 'app-details',
+  templateUrl: './details.page.html',
+  styleUrls: ['./details.page.scss'],
 })
 export class DetailsPage implements OnInit {
-id: string;
-public movie: IMovie;
-constructor(
-  private activatedrouter: ActivatedRoute,
-  private router: Router,
-  private moviedbService: MoviedbserviceService,
-  public toastController: ToastController
-  ) { }
+  id: String
+  entrenamientos: any;
+  entrenamientoName: string;
+  entrenamientoReps: string;
+  entrenamientoSets: string;
+  entrenamientoCover: string;
+  entrenamientoTargetedMuscles: string;
+
+  constructor(private entrenamientocrudService: EntrenamientocrudService, private route: Router, private activatedrouter: ActivatedRoute) { }
   ngOnInit() {
-  this.id = this.activatedrouter.snapshot.params.id;
-  this.moviedbService.getItem(this.id).then(
-  (data:IMovie)=> this.movie = data
-  );
+    this.id = this.activatedrouter.snapshot.params.id;
+    this.entrenamientocrudService.read_Entrenamientos().subscribe(data => {
+      this.entrenamientos = data.map(e => {
+        return {
+          id: e.payload.doc.id,
+          isEdit: false,
+          name: e.payload.doc.data()['name'],
+          reps: e.payload.doc.data()['reps'],
+          sets: e.payload.doc.data()['sets'],
+          cover: e.payload.doc.data()['cover'],
+          targetedMuscles: e.payload.doc.data()['targetedMuscles']
+        };
+      })
+      console.log(this.entrenamientos);
+
+      this.entrenamientos.forEach(element => {
+        if (element.id == this.id) {
+          this.entrenamientos = element;
+        }
+
+      });
+    });
   }
-  editRecord(movie){
-  this.router.navigate(['edit',movie.id])
+  EditRecord(entrenamientos) {
+    this.route.navigate(['edit', entrenamientos.id]);
   }
-  async removeRecord(id) {
-  const toast = await this.toastController.create({
-  header: 'Elimiar película',
-  position: 'top',
-  buttons: [
-  {
-  side: 'start',
-  icon: 'delete',
-  text: 'ACEPTAR',
-  handler: () => {
-  this.moviedbService.remove(id);
-  this.router.navigate(['home']);
+
+  RemoveRecord(rowID) {
+    this.entrenamientocrudService.delete_Entrenamiento(rowID);
   }
-  }, {
-  text: 'CANCELAR',
-  role: 'cancel',
-  handler: () => {
-  console.log('Cancel clicked');
-  }
-  }
-  ]
-  });
-  toast.present();
-  }
-  }
+}
